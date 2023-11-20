@@ -4,169 +4,110 @@ This file is for checking python syntax checking and we return true or false bas
 This is run before compiling the code.
 */
 
-
-
 prog: expr EOF;
 
-/* We want to define all expressions that exist in python. Let's look up a list.
-*/
 expr: left=expr op='^'       right=expr   #infixExpr
     | left=expr op=('+'|'-') right=expr   #infixExpr
     | left=expr op=('*'|'/') right=expr   #infixExpr
-    | INT                                 #numberExpr
-    | '(' expr ')'                        #parensExpr
-    | ID # variableExpr
-    | lambdaExpr                          #lambdaExpr
+    | left=expr op=('&'|'|'|'~'|'<<'|'>>') right=expr   #infixExpr
+    | '(' expr ')'                        #parenExpr
+    | ID                                  #variableExpr
+    |number                               #numberExpr
+    |lambda                               #lambdaExpr
+    |def                                  #defExpr
+    |funcCall                             #funcCallExpr
     ;
-def : ID '(' ID (',' ID)* '):' '{' stat* '}' ;
-lambdaExpr: 'lambda' ID (',' ID)* ':' expr;
-//Lexer Rules
-/* Arithmetic Operators */
-/*
-Add/Subtract operations allow:
-- int + int
-- float + float
-- int + float
-- float + int
-- string + string
-- list + list
-- tuple + tuple
-- set + set
-- dict + dict
-- dict + list
-- list + tuple
-- tuple + list
 
- */
+
+number: INT | FLOAT;
+lambda: 'lambda' ID ':' expr;
+def: ID '(' paramList? '):' '{' stat* '}';
+
+paramList: ID (',' ID)*;
+
+// Lexer Rules
 OP_ADD: '+';
-/*
-Subtraction operations allow:
-- int - int
-- float - float
-- int - float
-- float - int
- */
 OP_SUB: '-';
-/*
-Multiplication operations allow:
-- int * int
-- float * float
-- int * float
-- float * int
-- string * int
-- int * string
-- list * int
-- int * list
-- tuple * int
-- int * tuple
-- int * bool
-- bool * int
-*/
 OP_MUL: '*';
-/*
-Division operations allow:
-- int / int
-- float / float
-- int / float
-- float / int
-*/
 OP_DIV: '/';
-/*
-Modulo operations allow:
-- int % int
-- float % float
-- int % float
-- float % int
-*/
 OP_MOD: '%';
-/*
-Exponent operations allow:
-- int ** int
-- float ** float
-- int ** float
-- float ** int
-*/
 OP_EXP: '**';
-/*
-XOR operations allow:
-- int ^ int
-- float ^ float
-- int ^ float
-- float ^ int
-*/
 OP_XOR: '^';
-/*
-Floor Division operations allow:
-- int // int
-- float // float
-- int // float
-- float // int
-*/
 OP_FLOOR_DIV: '//';
 
+BITWISE_AND: '&';        // Bitwise AND
+BITWISE_OR: '|';         // Bitwise OR
+BITWISE_NOT: '~';        // Bitwise NOT
+BITWISE_SHIFT_LEFT: '<<';  // Bitwise Shift Left
+BITWISE_SHIFT_RIGHT: '>>'; // Bitwise Shift Right
 
-// create an assignment operator for a python variable in antlr4
+
+funcCall: ID '(' argList? ')';
+
+argList: expr (',' expr)*;
+
+statement: setAssignment | otherStatement;
+//
+literal: INT | FLOAT | STRING | BOOL | listLiteral | tupleLiteral | dictLiteral | setLiteral;
 assignmentOperator: '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '**=' | '//=';
-
-assignment: ID assignmentOperator expr ';';
-
-expr: ID | INT | STRING | '(' expr ')' | expr '+' expr | expr '-' expr | expr '*' expr | expr '/' expr;
-
-funcCall: ID '(' expr (',' expr)* ')';
-
-
-
-stat: ID '=' expr ';'
-    | expr ';'
-    ;
-
-bitwiseOperator : '&' | '|' | '^'| '~'| '<<' | ' >>' ;
-
 membershipOperator: 'in' | 'not in';
 identityOperator: 'is' | 'is not';
 logicOperators: 'and' | 'or' | 'not';
 comparisonOperator: '==' | '!=' | '<' | '>' | '<=' | '>=';
 
-
-// Data Types:
-ID: [a-zA-Z_][a-zA-Z_0-9]* ;
-BOOL: 'True' | 'False' ;
-INT     : [0-9]+ ;
-
-// Trying to do bitwise operations on FLOAT converts it to INT first so it's ok to use bitwise operations on them.
-FLOAT: [0-9]+ '.' [0-9]+ ([eE] [+-]? [0-9]+)? | [0-9]+ [eE] [+-]? [0-9]+ ;
-
-
-// Bitwise Operations are not defined for the below Data Types.
-STRING: '"' .*? '"';
-DICT: '{' .*? '}';
-LIST: '[' .*? ']';
-TUPLE: '(' .*? ')';
-SET: '{' .*? '}';
+//Statements in Python
+stat:assignStat
+    | exprStat
+    | ifStat
+    | whileStat
+    | forStat
+    | funcDef
+    | returnStat
+    | 'break' ';'
+    | 'continue' ';'
+    | 'pass' ';'
+    | 'print' exprStat
+    ;
 
 
-// Symbols:
-WS      : [ \t\r\n] -> channel(HIDDEN);
-NEWLINE : [\r\n]+ ;
-INDENT : [\s\t]+ ;
+assignStat: ID assignmentOperator expr ';';
 
-//Comment
-COMMENT: '#' ~[\r\n]* -> channel(HIDDEN);
-MULTILINE_COMMENT : '"""' .*? '"""' -> channel(HIDDEN);
+exprStat: expr ';';
 
-// I'm not sure what to do with otherStatement yet.
-statement: setAssignment | otherStatement;
+ifStat: 'if' expr ':' stat+ ('elif' expr ':' stat+)* ('else' ':' stat+)?;
 
-setAssignment: ID '=' setLiteral ';';
+whileStat: 'while' expr ':' stat+;
+
+forStat: 'for' ID 'in' expr ':' stat+;
+
+funcDef: 'def' ID '(' paramList? '):' '{' stat* '}';
+
+returnStat: 'return' expr ';';
+
+
+setAssignment: ID '=' literal ';';
+
+operator: assignmentOperator  | membershipOperator | identityOperator | logicOperators | comparisonOperator;
+
 
 setLiteral: '{' (expr (',' expr)*)? '}';
-
 dictLiteral: '{' (expr ':' expr (',' expr ':' expr)*)? '}';
-
+listLiteral: '[' (expr (',' expr)*)? ']';
 tupleLiteral: '(' (expr (',' expr)*)? ')';
 
-listLiteral: '[' (expr (',' expr)*)? ']';
-// Control flow statements
-ifStatement: 'if' expr ':' statement+ ('elif' expr ':' statement+)* ('else' ':' statement+)?;
-forStatement: 'for' ID 'in' expr ':' statement+;
-whileStatement: 'while' expr ':' statement+;
+otherStatement: ifStat | forStat | whileStat;
+
+// Lexer Rules
+ID: [a-zA-Z_][a-zA-Z_0-9]*;
+BOOL: 'True' | 'False';
+INT: [0-9]+;
+FLOAT: [0-9]+ '.' [0-9]+ ([eE] [+-]? [0-9]+)? | [0-9]+ [eE] [+-]? [0-9]+;
+STRING: '"' .*? '"';
+
+// Whitespace and comments
+WS: [ \t\r\n] -> channel(HIDDEN);
+NEWLINE: [\r\n]+ ;
+INDENT: [ \t]+ -> channel(HIDDEN);
+
+COMMENT: '#' ~[\r\n]* -> channel(HIDDEN);
+MULTILINE_COMMENT: '"""' .*? '"""' -> channel(HIDDEN);
