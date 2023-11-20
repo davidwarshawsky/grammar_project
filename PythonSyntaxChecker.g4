@@ -16,9 +16,10 @@ expr: left=expr op='^'       right=expr   #infixExpr
     | INT                                 #numberExpr
     | '(' expr ')'                        #parensExpr
     | ID # variableExpr
+    | lambdaExpr                          #lambdaExpr
     ;
 def : ID '(' ID (',' ID)* '):' '{' stat* '}' ;
-
+lambdaExpr: 'lambda' ID (',' ID)* ':' expr;
 //Lexer Rules
 /* Arithmetic Operators */
 /*
@@ -151,9 +152,21 @@ INDENT : [\s\t]+ ;
 
 //Comment
 COMMENT: '#' ~[\r\n]* -> channel(HIDDEN);
+MULTILINE_COMMENT : '"""' .*? '"""' -> channel(HIDDEN);
+
 // I'm not sure what to do with otherStatement yet.
 statement: setAssignment | otherStatement;
 
 setAssignment: ID '=' setLiteral ';';
 
 setLiteral: '{' (expr (',' expr)*)? '}';
+
+dictLiteral: '{' (expr ':' expr (',' expr ':' expr)*)? '}';
+
+tupleLiteral: '(' (expr (',' expr)*)? ')';
+
+listLiteral: '[' (expr (',' expr)*)? ']';
+// Control flow statements
+ifStatement: 'if' expr ':' statement+ ('elif' expr ':' statement+)* ('else' ':' statement+)?;
+forStatement: 'for' ID 'in' expr ':' statement+;
+whileStatement: 'while' expr ':' statement+;
