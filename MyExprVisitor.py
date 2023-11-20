@@ -42,3 +42,21 @@ class MyExprVisitor(ExprVisitor):
     # Visit a parse tree produced by ExprParser#parensExpr.
     def visitParensExpr(self, ctx: ExprParser.ParensExprContext):
         return self.visit(ctx.expr())  # Since enclosed by parents, just visit expr
+
+    # Visit a parse tree produced by ExprParser#logicalExpr.
+    def visitLogicalExpr(self, ctx: ExprParser.LogicalExprContext):
+        self.visit(ctx.left)  # Evaluate the left  expression and push to stack
+        self.visit(ctx.right)  # Evaluate the right expression and push to stack
+        b = self.stack.pop()  # Why is ‘b’ the first popped item?
+        a = self.stack.pop()
+        c = None
+
+        if ctx.OP_AND():
+            c = a and b
+        elif ctx.OP_OR():
+            c = a or b
+        elif ctx.OP_NOT():
+            c = not b
+
+        self.stack.append(c)
+        return c
