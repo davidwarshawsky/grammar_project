@@ -4,7 +4,7 @@ This file is for checking python syntax checking and we return true or false bas
 This is run before compiling the code.
 */
 
-prog: expr EOF;
+prog: expr* EOF;
 
 expr: left=expr op='^'       right=expr   #infixExpr
     | left=expr op=('+'|'-') right=expr   #infixExpr
@@ -12,16 +12,20 @@ expr: left=expr op='^'       right=expr   #infixExpr
     | left=expr op=('&'|'|'|'~'|'<<'|'>>') right=expr   #infixExpr
     | '(' expr ')'                        #parenExpr
     | ID                                  #variableExpr
+    | BOOL                                 #booleanExpr
     |number                               #numberExpr
     |lambda                               #lambdaExpr
-    |def                                  #defExpr
+    |funcDef                               #defExpr
     |funcCall                             #funcCallExpr
+    |listLiteral                            #listExp
+
+
     ;
 
 
 number: INT | FLOAT;
 lambda: 'lambda' ID ':' expr;
-def: ID '(' paramList? '):' '{' stat* '}';
+funcDef: 'def' ID '(' paramList? '):' '{' statement* '}';
 
 paramList: ID (',' ID)*;
 
@@ -35,6 +39,7 @@ OP_EXP: '**';
 OP_XOR: '^';
 OP_FLOOR_DIV: '//';
 
+
 BITWISE_AND: '&';        // Bitwise AND
 BITWISE_OR: '|';         // Bitwise OR
 BITWISE_NOT: '~';        // Bitwise NOT
@@ -46,7 +51,6 @@ funcCall: ID '(' argList? ')';
 
 argList: expr (',' expr)*;
 
-statement: setAssignment | otherStatement;
 //
 literal: INT | FLOAT | STRING | BOOL | listLiteral | tupleLiteral | dictLiteral | setLiteral;
 assignmentOperator: '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '**=' | '//=';
@@ -63,14 +67,17 @@ stat:assignStat
     | forStat
     | funcDef
     | returnStat
-    | 'break' ';'
-    | 'continue' ';'
-    | 'pass' ';'
-    | 'print' exprStat
+    | 'break'
+    | 'continue'
+    | 'pass'
+    | 'print' '(' expr ')'
+    | withStat
+
+
     ;
+withStat: 'with' expr 'as' ID ':' block;
 
-
-assignStat: ID assignmentOperator expr ';';
+assignStat: ID operator expr ';';
 
 exprStat: expr ';';
 
@@ -80,13 +87,16 @@ whileStat: 'while' expr ':' stat+;
 
 forStat: 'for' ID 'in' expr ':' stat+;
 
-funcDef: 'def' ID '(' paramList? '):' '{' stat* '}';
-
 returnStat: 'return' expr ';';
+
+//keep track of indentation
+block: INDENT stat+ DEDENT;
 
 
 setAssignment: ID '=' literal ';';
+statement: setAssignment | otherStatement;
 
+otherStatement: ifStat | whileStat | forStat | funcDef | returnStat | 'break' | 'continue' | 'pass' | 'print' '(' expr ')' | withStat | exprStat;
 operator: assignmentOperator  | membershipOperator | identityOperator | logicOperators | comparisonOperator;
 
 
@@ -95,7 +105,7 @@ dictLiteral: '{' (expr ':' expr (',' expr ':' expr)*)? '}';
 listLiteral: '[' (expr (',' expr)*)? ']';
 tupleLiteral: '(' (expr (',' expr)*)? ')';
 
-otherStatement: ifStat | forStat | whileStat;
+
 
 // Lexer Rules
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
@@ -108,6 +118,8 @@ STRING: '"' .*? '"';
 WS: [ \t\r\n] -> channel(HIDDEN);
 NEWLINE: [\r\n]+ ;
 INDENT: [ \t]+ -> channel(HIDDEN);
+DEDENT: ;
+
 
 COMMENT: '#' ~[\r\n]* -> channel(HIDDEN);
 MULTILINE_COMMENT: '"""' .*? '"""' -> channel(HIDDEN);
