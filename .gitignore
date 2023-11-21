@@ -2,3 +2,7 @@
 .antlr/
 __pycache__/
 
+*.interp
+*.tokens
+*Listener.py
+*Parser.py
