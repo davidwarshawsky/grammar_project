@@ -1,2 +1,4 @@
 .idea/
 .antlr/
+__pycache__/
+
