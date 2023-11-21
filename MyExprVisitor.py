@@ -42,3 +42,5 @@ class MyExprVisitor(ExprVisitor):
     # Visit a parse tree produced by ExprParser#parensExpr.
     def visitParensExpr(self, ctx: ExprParser.ParensExprContext):
         return self.visit(ctx.expr())  # Since enclosed by parents, just visit expr
+
+    # Visit a parse tree produced by ExprParser#logicalExpr.
