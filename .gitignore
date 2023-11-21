@@ -6,3 +6,5 @@ __pycache__/
 *.tokens
 *Listener.py
 *Parser.py
+
+*Lexer.py
