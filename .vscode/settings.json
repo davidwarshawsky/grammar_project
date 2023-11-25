@@ -1,0 +1,13 @@
+{
+    "files.exclude": {
+        ".idea/": true,
+        "**/.antlr/" : true,
+        "**/__pycache__/":true,
+        "**/*.interp":true,
+        "**/*.tokens":true,
+        "**/*Listener.py":true,
+        "**/*Parser.py":true,
+        "**/*Lexer.py":true,
+
+      }
+}
