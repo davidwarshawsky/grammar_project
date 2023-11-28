@@ -1,0 +1,45 @@
+
+expr: logical_or_expr;
+
+logical_or_expr
+    : logical_and_expr
+    | left=logical_or_expr op=OP_LOGICAL_OR right=logical_and_expr   
+    ;
+
+logical_and_expr
+    : comp_expr
+    | left=logical_and_expr op=OP_LOGICAL_AND right=comp_expr
+    ;
+
+
+comp_expr
+    : bitwise_or_expr
+    | left=comp_expr op=OP_COMP right=bitwise_or_expr
+    ;
+
+bitwise_or_expr
+    : bitwise_xor_expr
+    | left=bitwise_or_expr op=OP_OR right=bitwise_xor_expr
+    ;
+
+bitwise_xor_expr
+    : bitwise_and_expr
+    | left=bitwise_xor_expr op=OP_XOR right=bitwise_and_expr
+    ;
+
+bitwise_and_expr
+    : shift_expr
+    | left=bitwise_and_expr op=OP_AND right=shift_expr
+    ;
+
+shift_expr
+    : add_sub_expr
+    | left=shift_expr op=OP_SHIFT right=add_sub_expr
+    ;
+
+add_sub_expr
+    : mdfm_expr
+    | left=add_sub_expr op=OP_SUB right=mdfm_expr 
+    | left=add_sub_expr op=OP_ADD right=mdfm_expr
+    ;
+n

@@ -15,4 +15,4 @@ class CommentCheckerVisitor(ParseTreeVisitor):
 
 
 
-del CommentCheckerParser
+# del CommentCheckerParser 
