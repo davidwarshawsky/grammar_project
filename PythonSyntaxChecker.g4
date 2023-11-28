@@ -228,7 +228,7 @@ NONE: 'None' ;
 // Symbols:
 WS: [ \t]+ -> skip;
 NEWLINE : [\r\n]+ ;
-INDENT : [\s\t]+ ;
+INDENT : [ \t]+ ;
 ANY: ~[\r\n]*;
 
 
