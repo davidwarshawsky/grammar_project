@@ -19,10 +19,8 @@ class MyExprVisitor(OpsVisitor):
                 # For all other operators, visit the left child before the right child
                 left = self.visit(ctx.expr(0))
                 right = self.visit(ctx.expr(1))
-             # Check if the combination of left and right operand types is allowed
-            if any([(left, right) in combination[:2] or (right,left) in combination[:2] for combination in combinations[op]]):
-                # If the operation is valid, return the type of the result
-                return combinations[op][2]  # Assuming the third value in the tuple is the result type
+            if any([(left, right) == combination[:2] for combination in combinations[op]]):
+                return [combination[2] for combination in combinations[op] if (left, right) == combination[:2]][0]
             else:
                 # If the operation is invalid, raise an error
                 raise TypeError(f'unsupported operand type(s) for {op}: {left} and {right}')
@@ -74,7 +72,7 @@ class MyExprVisitor(OpsVisitor):
 def main():
     # The input expression
     input_expr = '2 * {"hello":"david"} / 5 * 2 + 3 ** 2 / 2'
-    input_expr_2 = '2 ** 3 ** 2'
+    input_expr_2 = '["hello"] * 3'
     # Create the lexer and parser
     lexer = OpsLexer(InputStream(input_expr_2))
     stream = CommonTokenStream(lexer)
@@ -96,14 +94,14 @@ if __name__ == '__main__':
     main()
 
 
-def example():
-       print("hello ")
-    print("world")
-print("Hello")
-example()
+# def example():
+#        print("hello ")
+#     print("world")
+# print("Hello")
+# example()
 
-def example2():
-    print("hello")
-    print("world")
-print("Hello")
-example()
+# def example2():
+#     print("hello")
+#     print("world")
+# print("Hello")
+# example()
