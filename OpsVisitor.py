@@ -24,5 +24,35 @@ class OpsVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by OpsParser#immutable_data_structures.
+    def visitImmutable_data_structures(self, ctx:OpsParser.Immutable_data_structuresContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OpsParser#dict.
+    def visitDict(self, ctx:OpsParser.DictContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OpsParser#set.
+    def visitSet(self, ctx:OpsParser.SetContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OpsParser#list.
+    def visitList(self, ctx:OpsParser.ListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OpsParser#for_expr.
+    def visitFor_expr(self, ctx:OpsParser.For_exprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OpsParser#if_expr.
+    def visitIf_expr(self, ctx:OpsParser.If_exprContext):
+        return self.visitChildren(ctx)
+
+
 
 del OpsParser

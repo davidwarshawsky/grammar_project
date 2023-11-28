@@ -30,51 +30,40 @@ class MyExprVisitor(OpsVisitor):
     def visitData_structures(self, ctx:OpsParser.Data_structuresContext):
         if ctx.INT() is not None:
             return 'INT'
-            # return int(ctx.INT().getText())
         elif ctx.FLOAT() is not None:
             return 'FLOAT'
-            # return float(ctx.FLOAT().getText())
         elif ctx.BOOL() is not None:
             return 'BOOL'
-            # return ctx.BOOL().getText() == 'True'
         elif ctx.STRING() is not None:
             return 'STRING'
-            # return ctx.STRING().getText()[1:-1]  # Remove the quotes
         elif ctx.TUPLE() is not None:
             return 'TUPLE'
-            # return tuple(self.visit(ctx.tuple_elems()))
-        elif ctx.TUPLE() is not None:
-            return 'TUPLE'
-                # # Remove the parentheses and split the string into a list
-                # items = ctx.TUPLE().getText()[1:-1].split(',')
-                # # Convert the list into a tuple and return it
-                # return tuple(items)
-        elif ctx.SET() is not None:
-            return 'SET'
-            # # Remove the curly braces and split the string into a list
-            # items = ctx.SET().getText()[1:-1].split(',')
-            # # Convert the list into a set and return it
-            # return set(items)
-        elif ctx.LIST() is not None:
+        elif ctx.list_() is not None:
             return 'LIST'
-            # # Remove the square brackets and split the string into a list
-            # items = ctx.LIST().getText()[1:-1].split(',')
-            # # Return the list
-            # return items
-        elif ctx.DICT() is not None:
+        elif ctx.dict_() is not None:
             return 'DICT'
-            # # Remove the curly braces and split the string into a list of key-value pairs
-            # items = ctx.DICT().getText()[1:-1].split(',')
-            # # Convert the list into a dictionary and return it
-            # return dict(item.split(':') for item in items)
+        elif ctx.NONE() is not None:
+            return 'NONE'
+        elif ctx.set_() is not None:
+            return 'SET'
+    
+    def visitDict_(self, ctx:OpsParser.DictContext):
+        key_type = self.visit(ctx.immutable_data_structures())
+        if key_type not in ['INT', 'FLOAT', 'STRING', 'BOOL', 'TUPLE', 'NONE']:
+            raise TypeError(f"Mutable types are not allowed as keys: {key_type}")
+        else:
+            return 'DICT'
 
 
 def main():
     # The input expression
     input_expr = '2 * {"hello":"david"} / 5 * 2 + 3 ** 2 / 2'
     input_expr_2 = '["hello"] * 3'
+    input_expr_3 = '[x for x in [1,2,3,4] for y in [1,2,3]]'
+    input_expr_4 = '{1001: 1001 > 1000, 10001: 10001 > 1000, 100001: 100001 > 1000, 1000001: 1000001 > 1000, 10000001: 10000001 > 1000}'
+    input_expr_5 = '{{"hi":"there"}:1 for x in [1,2,3,4]}'
     # Create the lexer and parser
-    lexer = OpsLexer(InputStream(input_expr_2))
+    lexer = OpsLexer(InputStream(input_expr_5))
     stream = CommonTokenStream(lexer)
     parser = OpsParser(stream)
 
