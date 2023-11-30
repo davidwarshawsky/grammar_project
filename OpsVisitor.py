@@ -24,11 +24,6 @@ class OpsVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by OpsParser#immutable_data_structures.
-    def visitImmutable_data_structures(self, ctx:OpsParser.Immutable_data_structuresContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by OpsParser#dict.
     def visitDict(self, ctx:OpsParser.DictContext):
         return self.visitChildren(ctx)
