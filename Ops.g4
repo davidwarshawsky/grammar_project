@@ -29,24 +29,16 @@ data_structures
     | set
     ;
 
-
-immutable_data_structures
-    : INT                   
-    | FLOAT
-    | BOOL
-    | STRING                
-    | TUPLE                 
-    ;
 dict
-    :   '{' (immutable_data_structures ':' expr (',' immutable_data_structures ':' expr)* | expr ':' expr for_expr+ ) '}'
+    :   '{' (data_structures ':' expr (',' data_structures ':' expr)* | data_structures ':' expr for_expr+ )? '}'
     ;
 
 set
-    :   '{' (expr (',' expr)*)? '}'
+    :   '{' expr (',' expr)* '}'
     ;
 
 list
-    :   '[' (expr (',' expr)* | expr for_expr+ ) ']'
+    :   '[' (expr (',' expr)* | expr for_expr+ )* ']'
     ;
 for_expr
     :   'for' ID 'in' expr ( if_expr )?
@@ -76,3 +68,12 @@ WS: [ \t]+ -> skip;
 /*OPS */
 // OP_NOT: '~';
 // OP_LOGICAL_NOT: 'not';
+
+
+// immutable_data_structures
+//     : INT                   
+//     | FLOAT
+//     | BOOL
+//     | STRING                
+//     | TUPLE                 
+//     ;

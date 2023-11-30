@@ -13,20 +13,44 @@ class MyExprVisitor(OpsVisitor):
             op = ctx.op.text
             # For the ** operator, visit the left child before the right child
             if op == '**':
-                left = self.visit(ctx.data_structures())
                 right = self.visit(ctx.expr()[-1])
+                print("ctx.expr() length: " + str(len(ctx.expr())))
+                # print text of ctx.expr()[-1]
+                print(ctx.expr()[-1].getText())
+                print(f"right = {right}")
+                left = self.visit(ctx.data_structures())
+                print(f"left = {left}")
+                print(ctx.data_structures().getText())
+
             else:
                 # For all other operators, visit the left child before the right child
                 left = self.visit(ctx.expr(0))
                 right = self.visit(ctx.expr(1))
-            if any([(left, right) == combination[:2] for combination in combinations[op]]):
-                return [combination[2] for combination in combinations[op] if (left, right) == combination[:2]][0]
-            else:
+            for combination in combinations[op]:
+                if (left, right) == combination[:2]:
+                    return combination[2]
+                elif (right, left) == combination[:2]:
+                    return combination[2]
+                else:
                 # If the operation is invalid, raise an error
-                raise TypeError(f'unsupported operand type(s) for {op}: {left} and {right}')
+                    raise TypeError(f'unsupported operand type(s) for {op}: {left} and {right}')
+        # check the data structure if it is a dictionary
         else:
-            return self.visit(ctx.data_structures())                        
-
+            data_structure = self.visit(ctx.data_structures())
+            if data_structure == 'DICT':
+            # Check if the key of the dictionary is an immutable data type
+                self.visitDict_(ctx.dict_())
+            return data_structure
+    
+    def visitDict_(self, ctx:OpsParser.DictContext):
+        # Iterate over all children of the dict context
+        for i in range(0, len(ctx.children)):
+            # Check if the child is a key (it should be an instance of Data_structuresContext)
+            if isinstance(ctx.getChild(i), OpsParser.Data_structuresContext):
+                key_type = self.visit(ctx.getChild(i))
+                if key_type not in ['INT', 'FLOAT', 'STRING', 'BOOL', 'TUPLE', 'NONE']:
+                    raise TypeError(f"Mutable types are not allowed as keys: {key_type}")
+        return 'DICT'
     def visitData_structures(self, ctx:OpsParser.Data_structuresContext):
         if ctx.INT() is not None:
             return 'INT'
@@ -46,13 +70,6 @@ class MyExprVisitor(OpsVisitor):
             return 'NONE'
         elif ctx.set_() is not None:
             return 'SET'
-    
-    def visitDict_(self, ctx:OpsParser.DictContext):
-        key_type = self.visit(ctx.immutable_data_structures())
-        if key_type not in ['INT', 'FLOAT', 'STRING', 'BOOL', 'TUPLE', 'NONE']:
-            raise TypeError(f"Mutable types are not allowed as keys: {key_type}")
-        else:
-            return 'DICT'
 
 
 def main():
@@ -62,8 +79,12 @@ def main():
     input_expr_3 = '[x for x in [1,2,3,4] for y in [1,2,3]]'
     input_expr_4 = '{1001: 1001 > 1000, 10001: 10001 > 1000, 100001: 100001 > 1000, 1000001: 1000001 > 1000, 10000001: 10000001 > 1000}'
     input_expr_5 = '{{"hi":"there"}:1 for x in [1,2,3,4]}'
+    input_expr_6 = '["hello"] * 2.3'
+    input_expr_7 = '{[]:1}'
+    input_expr_8 = '2 ** 3 ** 2'
+    input_expr_9 = '"hello" ** 3 ** 2'
     # Create the lexer and parser
-    lexer = OpsLexer(InputStream(input_expr_5))
+    lexer = OpsLexer(InputStream(input_expr_8))
     stream = CommonTokenStream(lexer)
     parser = OpsParser(stream)
 
