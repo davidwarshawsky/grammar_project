@@ -5,8 +5,13 @@ from ExprParser import ExprParser
 from MyExprVisitor import MyExprVisitor
 
 def main():
-    inputs = ['"hello" *  3','{1,2,3} * 3','{} * 3','(1+2+3) + 5 ** 1','(1+2+3)']
-    inp = '(1+2+3) + 5 ** 1'
+    inputs = {0:'"hello" *  3',
+              1:'{1,2,3} * 3',
+              2:'{} * 3',
+              3:'(1+2+3) + 5 ** 1',
+              4:'(1+2+3)',
+              5: 'friend = "David"'}
+    inp = inputs[5]
     input_stream = InputStream(inp)
     print(f" The input is {inp}")
     lexer = ExprLexer(input_stream)

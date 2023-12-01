@@ -58,6 +58,7 @@ powExpr
 unaryExpr
     : '(' expr ')'                   #parensExpression
     | data_structures                #dataTypeExpression
+    | ID '=' expr                   #assignmentExpression
     ;
 
 data_structures
@@ -113,7 +114,7 @@ OP_SUB: '-';
 OP_MUL: '*';
 OP_DIV: '/';
 OP_POW: '**';
- 
+
 NEWLINE : [\r\n]+ ;
 INT     : [0-9]+;
 FLOAT   : [0-9]+ '.' [0-9]+ ([eE] [+-]? [0-9]+)? | [0-9]+ [eE] [+-]? [0-9]+ ;

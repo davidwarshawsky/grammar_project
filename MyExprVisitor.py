@@ -103,3 +103,6 @@ class MyExprVisitor(ExprVisitor):
     # Visit a parse tree produced by ExprParser#list.
     def visitList(self, ctx: ExprParser.ListContext):
         return 'LIST'
+    
+    def visitAssignmentExpression(self, ctx: ExprParser.AssignmentExpressionContext):
+        return self.visit(ctx.expr())

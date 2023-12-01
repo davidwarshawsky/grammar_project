@@ -119,6 +119,11 @@ class ExprVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by ExprParser#assignmentExpression.
+    def visitAssignmentExpression(self, ctx:ExprParser.AssignmentExpressionContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by ExprParser#data_structures.
     def visitData_structures(self, ctx:ExprParser.Data_structuresContext):
         return self.visitChildren(ctx)
