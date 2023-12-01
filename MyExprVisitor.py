@@ -13,29 +13,46 @@ class MyExprVisitor(ExprVisitor):
                 return combination[2]
         raise ValueError(f"Invalid operation: {a} {op} {b}")
 
+    def check_ops(self,ctx):
+        a = self.visit(ctx.left)
+        b = self.visit(ctx.right)
+        return self.check_combination(ctx.op.text, a, b)
     # Visit a parse tree produced by ExprParser#prog.
     def visitProg(self, ctx: ExprParser.ProgContext):
-        return self.visit(ctx.expr())  # Just visit the self expression
-
-    # Visit a parse tree produced by ExprParser#addSubExpr.
-    def visitAddSubExpr(self, ctx: ExprParser.AddSubExprContext):
-        a = self.visit(ctx.left)  # Evaluate the left  expression
-        b = self.visit(ctx.right)  # Evaluate the right expression
-
-        result_data_type = self.check_combination(ctx.op.text, a, b)
-
-        return result_data_type
-
-    # Visit a parse tree produced by ExprParser#multDivExpr.
-    def visitMultDivExpr(self, ctx: ExprParser.MultDivExprContext):
-        a = self.visit(ctx.left)  # Evaluate the left  expression
-        b = self.visit(ctx.right)  # Evaluate the right expression
-
-        result_data_type = self.check_combination(ctx.op.text, a, b)
-        
-        return result_data_type
+        # Chnage the try except finally to say the program is correctly made
+        try:
+            return self.visit(ctx.expr())  # Visit the expression
+        except ValueError as e:
+            print(e)
+        finally:
+            print("Program is correctly made")
+        # try:
+        #     return self.visit(ctx.expr())  # Just visit the self expression
+        # except ValueError as e:
+        #     print(e)
+        # finally:
+    
+    def visitOrExpression(self, ctx: ExprParser.OrExpressionContext):
+        return self.check_ops(ctx)
+    def visitAndExpression(self, ctx: ExprParser.AndExpressionContext):
+        return self.check_ops(ctx)
+    def visitCompExpression(self, ctx: ExprParser.CompExpressionContext):
+        return self.check_ops(ctx)
+    def visitBitOrExpression(self, ctx: ExprParser.BitOrExpressionContext):
+        return self.check_ops(ctx)
+    def visitBitXorExpression(self, ctx: ExprParser.BitXorExpressionContext):
+        return self.check_ops(ctx)
+    def visitBitAndExpression(self, ctx: ExprParser.BitAndExpressionContext):
+        return self.check_ops(ctx)
+    def visitBitShiftExpression(self, ctx: ExprParser.BitShiftExpressionContext):
+        return self.check_ops(ctx)
+    def visitAddSubExpression(self, ctx: ExprParser.AddSubExpressionContext):
+        return self.check_ops(ctx)
+    def visitMultDivExpression(self, ctx: ExprParser.MultDivExpressionContext):
+        return self.check_ops(ctx)    
+    
     # Visit a parse tree produced by ExprParser#rightAssociativePowExpr.
-    def visitRightAssociativePowExpr(self, ctx: ExprParser.RightAssociativePowExprContext):
+    def visitRightAssociativePowExpression(self, ctx: ExprParser.RightAssociativePowExpressionContext):
         a = self.visit(ctx.unaryExpr())  # Evaluate the unary expression
         if ctx.op:
             b = self.visit(ctx.powExpr())  # If there's a power operation, evaluate the right expression            
@@ -47,7 +64,7 @@ class MyExprVisitor(ExprVisitor):
 
 
     # Visit a parse tree produced by ExprParser#parensExpr.
-    def visitParensExpr(self, ctx: ExprParser.ParensExprContext):
+    def visitParensExpression(self, ctx: ExprParser.ParensExpressionContext):
         return self.visit(ctx.expr())  # Since enclosed by parents, just visit expr.
 
     # Visit a parse tree produced by ExprParser#data_structures.
