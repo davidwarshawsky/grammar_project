@@ -51,6 +51,11 @@ if_expr
 
 
 
+// if statement
+if_statement_expr
+    :   'if' expr ':' expr ( 'elif' expr ':' expr )* ( 'else' ':' expr )? #if_statement_expression
+    ;
+
 /*Data Types: */
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
 BOOL: 'True' | 'False' ;

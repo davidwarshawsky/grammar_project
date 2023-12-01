@@ -11,7 +11,9 @@ def main():
               3:'(1+2+3) + 5 ** 1',
               4:'(1+2+3)',
               5: 'friend = "David"'}
-    inp = inputs[5]
+    # inp = inputs[5]
+    with open('if_statement_tester.py', 'r') as file:
+        inp = file.read()
     input_stream = InputStream(inp)
     print(f" The input is {inp}")
     lexer = ExprLexer(input_stream)
