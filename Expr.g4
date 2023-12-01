@@ -1,106 +1,85 @@
 grammar Expr;
-
-
-prog: (statement|expr)* EOF;
-
-
-
-// Expressions
-expr:  '(' expr ')'                        #parenExpr
-    | left=expr op='^' right=expr        #infixExpr
-    | left=expr op=('*'|'/'|'//'|'%') right=expr    #infixExpr
-    | left=expr op=('+'|'-') right=expr    #infixExpr
-    | left=expr 'and' right=expr           #andExpr
-    | left=expr 'or' right=expr            #orExpr
-    | 'not' expr                           #notExpr
-    | INT                                  #numberExpr
-    | FLOAT                                #numberExpr
-    | BOOL                                 #boolExpr
-    | ID                                   #variableExpr
-    | STRING                               #stringExpr
-    | func                                  #functionCallExpr
-    | list                                  #listExpr
-    | index                                  #indexExpr
-    |LINE_COMMENT                        #commentExpr
-    |BLOCK_COMMENT                     #commentExpr
+ 
+prog: expr EOF;
+ 
+expr
+    : left=expr op=('+'|'-') right=multExpr   #addSubExpr
+    | multExpr                                #multExprPass
     ;
 
-assignmentStmt: ID '=' expr;
-ifStmt: IF expr ':' statement+ (ELSE ':' statement+)?;
-whileStmt: WHILE expr ':' statement+;
-forStmt: FOR ID IN expr ':' statement+;
-funcDefStmt: DEF ID '(' paramList? ')' (':' returnType)? ':' statement+;
-printStmt: PRINT expr;
-breakStmt: BREAK;
-continueStmt: CONTINUE;
-returnStmt: RETURN expr?;
+multExpr
+    : left=multExpr op=('*'|'/') right=powExpr  #multDivExpr
+    | powExpr                                    #powExprPass
+    ;
+
+powExpr
+    : unaryExpr (op='**' powExpr)?  #rightAssociativePowExpr
+    ;
+
+unaryExpr
+    : '(' expr ')'                   #parensExpr
+    | data_structures                #dataTypeExpr
+    ;
+
+data_structures
+    : int                            
+    | float                          
+    | bool                          
+    | string                         
+    | tuple                         
+    | list                           
+    | dict                           
+    | none                          
+    | set            
+    | ID                             
+    ;
+
+int: INT| 'INT';
+float: FLOAT| 'FLOAT';
+bool: BOOL| 'BOOL';
+string: STRING| 'STRING';
+
+none: NONE| 'NONE';
+
+tuple
+    :   '(' expr ',' expr (',' expr)* ')'
+    |   'TUPLE'
+    ;
 
 
-// Expressions
+dict
+    :   '{' (data_structures ':' expr (',' data_structures ':' expr)*)? '}'
+    |   'DICT'
+    ;
 
+set
+    :   '{' expr (',' expr)* '}'
+    |   'SET'
+    ;
 
-func: ID '(' argList? ')';
-argList: expr (',' expr)*;
-list: '[' expr? (',' expr)* ']';
-index: ID '[' expr ']';
+list
+    :   '[' (expr (',' expr)* | expr for_expr+ )* ']'
+    |   'LIST'
+    ;
+for_expr
+    :   'for' ID 'in' expr ( if_expr )?
+    ;
 
-// Parameters and Return Types
-paramList: ID (',' ID)*;
-returnType: ID;
+if_expr
+    :   'if' expr ( 'else' expr )?
+    ;
 
-// Lexer Rules
-
-// Data Types
-ID: [a-zA-Z_][a-zA-Z_0-9]*;
-INT: [0-9]+;
-FLOAT: [0-9]+ '.' [0-9]+ ([eE] [+-]? [0-9]+)? | [0-9]+ [eE] [+-]? [0-9]+;
-STRING: '"' .*? '"';
-BOOL: 'True' | 'False';
-
-// Operators
 OP_ADD: '+';
 OP_SUB: '-';
 OP_MUL: '*';
 OP_DIV: '/';
-OP_MOD: '%';
-OP_FLOOR_DIV: '//';
-OP_POW: '^';
-
-// Keywords
-PRINT: 'print';
-FOR: 'for';
-BREAK: 'break';
-IF: 'if';
-ELSE: 'else';
-WHILE: 'while';
-IN: 'in';
-DEF: 'def';
-RETURN: 'return';
-CONTINUE: 'continue';
-
-// Whitespace and Comments
-WS: [ \t\r\n] -> skip;
-LINE_COMMENT: '#' ~[\r\n]* -> skip;
-BLOCK_COMMENT: '/*' .*? '*/' -> skip;
-
-// Relational Operators
-GREATER_THAN: '>';
-LESS_THAN: '<';
-GREATER_EQUAL: '>=';
-LESS_EQUAL: '<=';
-EQUAL: '==';
-NOT_EQUAL: '!=';
-
-// Statements
-statement: assignmentStmt
-         | ifStmt
-         | whileStmt
-         | funcDefStmt
-         | printStmt
-         | breakStmt
-         | continueStmt
-         | returnStmt
-         |paramList
-         ;
-
-
+OP_POW: '**';
+ 
+NEWLINE : [\r\n]+ ;
+INT     : [0-9]+;
+FLOAT   : [0-9]+ '.' [0-9]+ ([eE] [+-]? [0-9]+)? | [0-9]+ [eE] [+-]? [0-9]+ ;
+BOOL    : 'True' | 'False' ;
+STRING  : '"' .*? '"';
+NONE    : 'None';
+ID      : [a-zA-Z_][a-zA-Z_0-9]*;
+WS      : [ \t]+ -> skip;
