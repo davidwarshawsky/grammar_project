@@ -84,20 +84,11 @@ comparison_combinations = [
     ('SET', 'SET','BOOL'),
 ]
 
-data_types = ['INT', 'FLOAT', 'STRING', 'LIS', 'TUPLE', 'SET', 'NONE', 'BOOL', 'DICT']
-any = [
-    ('INT', 'INT','INT'),
-    ('FLOAT', 'FLOAT','FLOAT'),
-    ('INT', 'FLOAT','FLOAT'),
-    ('STRING', 'STRING','STRING'),
-    ('LIST', 'LIST','LIST'),
-    ('TUPLE', 'TUPLE','TUPLE'),
-    ('SET', 'SET','SET'),
-    ('BOOL', 'BOOL','BOOL'),
-    ('DICT', 'DICT','DICT'),
-    ('NONE', 'NONE','NONE'),
-    
-]
+
+data_types = ['INT', 'FLOAT', 'STRING', 'LIS', 'TUPLE', 'SET', 'BOOL', 'DICT']
+
+
+
 any_combinations = [(x, y,'BOOL') for i, x in enumerate(data_types) for y in data_types[i:]]
 
 combinations = {
