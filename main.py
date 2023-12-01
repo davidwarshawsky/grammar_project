@@ -17,7 +17,7 @@ def main():
     visitor = MyExprVisitor()
     res = visitor.visit(tree)  # Evaluate the expression
 
-    print(res)
+    # print(res)
 
 if __name__ == '__main__':
     main()

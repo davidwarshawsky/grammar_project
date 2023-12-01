@@ -1,24 +1,63 @@
 grammar Expr;
  
 prog: expr EOF;
- 
+
+
+
+
 expr
-    : left=expr op=('+'|'-') right=multExpr   #addSubExpr
-    | multExpr                                #multExprPass
+    : left=expr op='or' right=andExpr  #orExpression
+    | andExpr  #andExprPass
     ;
 
+andExpr
+    : left=andExpr op='and' right=compExpr  #andExpression
+    | compExpr  #compExprPass
+    ;
+
+compExpr
+    : left=compExpr op=('<' | '>' | '<=' | '>=' | '==' | '!=') right=bitOrExpr  #compExpression
+    | bitOrExpr  #bitOrExprPass
+    ;
+
+bitOrExpr
+    : left=bitOrExpr op='|' right=bitXorExpr  #bitOrExpression
+    | bitXorExpr  #bitXorExprPass
+    ;
+
+bitXorExpr
+    : left=bitXorExpr op='^' right=bitAndExpr  #bitXorExpression
+    | bitAndExpr  #bitAndExprPass
+    ;
+
+bitAndExpr
+    : left=bitAndExpr op='&' right=bitShiftExpr  #bitAndExpression
+    | bitShiftExpr  #bitShiftExprPass
+    ;
+
+bitShiftExpr
+    : left=bitShiftExpr op=('<<' | '>>') right=addExpr  #bitShiftExpression
+    | addExpr  #addExprPass
+    ;
+
+addExpr
+    : left=addExpr op=('+'|'-') right=multExpr   #addSubExpression
+    | multExpr  #multExprPass
+    ;
+
+
 multExpr
-    : left=multExpr op=('*'|'/') right=powExpr  #multDivExpr
+    : left=multExpr op=('*' | '/' | '%' | '//') right=powExpr  #multDivExpression
     | powExpr                                    #powExprPass
     ;
 
 powExpr
-    : unaryExpr (op='**' powExpr)?  #rightAssociativePowExpr
+    : unaryExpr (op='**' powExpr)?  #rightAssociativePowExpression
     ;
 
 unaryExpr
-    : '(' expr ')'                   #parensExpr
-    | data_structures                #dataTypeExpr
+    : '(' expr ')'                   #parensExpression
+    | data_structures                #dataTypeExpression
     ;
 
 data_structures
