@@ -124,6 +124,11 @@ class ExprVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by ExprParser#ifStatementExpression.
+    def visitIfStatementExpression(self, ctx:ExprParser.IfStatementExpressionContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by ExprParser#data_structures.
     def visitData_structures(self, ctx:ExprParser.Data_structuresContext):
         return self.visitChildren(ctx)
@@ -181,6 +186,11 @@ class ExprVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by ExprParser#if_expr.
     def visitIf_expr(self, ctx:ExprParser.If_exprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ExprParser#if_statement_expression.
+    def visitIf_statement_expression(self, ctx:ExprParser.If_statement_expressionContext):
         return self.visitChildren(ctx)
 
 

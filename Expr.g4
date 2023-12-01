@@ -59,6 +59,7 @@ unaryExpr
     : '(' expr ')'                   #parensExpression
     | data_structures                #dataTypeExpression
     | ID '=' expr                   #assignmentExpression
+    | if_statement_expr             #ifStatementExpression
     ;
 
 data_structures
@@ -108,6 +109,17 @@ for_expr
 if_expr
     :   'if' expr ( 'else' expr )?
     ;
+if_statement_expr
+    :   'if' expr ':' expr ( 'elif' expr ':' expr )* ( 'else' ':' expr )? #if_statement_expression
+    ;
+
+for_loop_expr
+    :   'for' ID 'in' expr ':' #for_loop_expression
+    ;
+while_loop_expr
+    :   'while' expr ':' #while_loop_expression
+    ;
+
 
 OP_ADD: '+';
 OP_SUB: '-';
@@ -122,4 +134,4 @@ BOOL    : 'True' | 'False' ;
 STRING  : '"' .*? '"';
 NONE    : 'None';
 ID      : [a-zA-Z_][a-zA-Z_0-9]*;
-WS      : [ \t]+ -> skip;
+WS      : [ \t\n]+ -> skip;

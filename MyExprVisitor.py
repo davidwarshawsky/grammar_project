@@ -61,6 +61,19 @@ class MyExprVisitor(ExprVisitor):
         else:
             return a
     
+    def visitIfStatementExpression(self, ctx: ExprParser.If_statement_expressionContext):
+        # Evaluate the expression for 'if'
+        if_expr_result = self.visit(ctx.expr(0))
+        # Check if the result is a bool or ID
+        if if_expr_result not in ['BOOL', 'ID']:
+            raise ValueError(f"Invalid condition in if statement: {if_expr_result}")
+
+        # Evaluate the expressions for 'elif'
+        for i in range(1, len(ctx.expr()), 2):
+            elif_expr_result = self.visit(ctx.expr(i))
+            # Check if the result is a bool or ID
+            if elif_expr_result not in ['BOOL', 'ID']:
+                raise ValueError(f"Invalid condition in elif statement: {elif_expr_result}")
 
 
     # Visit a parse tree produced by ExprParser#parensExpr.
