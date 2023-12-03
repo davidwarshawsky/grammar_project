@@ -1,8 +1,8 @@
-from ExprParser import ExprParser
-from ExprVisitor import ExprVisitor
+from TestParser import TestParser
+from TestVisitor import TestVisitor
 from operations import combinations
 
-class MyExprVisitor(ExprVisitor):
+class MyTestVisitor(TestVisitor):
     def __init__(self):
         super(MyExprVisitor, self).__init__()
 
@@ -66,7 +66,7 @@ class MyExprVisitor(ExprVisitor):
     def visitRightAssociativePowExpression(self, ctx: ExprParser.RightAssociativePowExpressionContext):
         a = self.visit(ctx.unaryExpr())  # Evaluate the unary expression
         if ctx.op:
-            b = self.visit(ctx.powExpr())  # If there's a power operation, evaluate the right expression            
+            b = self.visit(ctx.powExpr())  # If there's a power operation, evaluate the right expression
             result_data_type = self.check_combination(ctx.op.text, a, b)
             return result_data_type
         else:
@@ -128,4 +128,3 @@ class MyExprVisitor(ExprVisitor):
 
     def visitAssignmentExpression(self, ctx: ExprParser.AssignmentExpressionContext):
         return self.visit(ctx.expr())
-
