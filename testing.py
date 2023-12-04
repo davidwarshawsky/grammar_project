@@ -1,3 +1,3 @@
-stuff = 5+5+5 \
-+5
-print(stuff)
+hello = "hi \
+stuff = friend()"
+print(hello)

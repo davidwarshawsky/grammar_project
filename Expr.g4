@@ -2,9 +2,6 @@ grammar Expr;
  
 prog: expr EOF;
 
-
-
-
 expr
     : left=expr op='or' right=andExpr  #orExpression
     | andExpr  #andExprPass
@@ -60,6 +57,8 @@ unaryExpr
     | data_structures                #dataTypeExpression
     | ID '=' expr                   #assignmentExpression
     | if_statement_expr             #ifStatementExpression
+    | for_loop_expr                 #forLoopExpression
+    | while_loop_expr               #whileLoopExpression
     ;
 
 data_structures
@@ -110,7 +109,7 @@ if_expr
     :   'if' expr ( 'else' expr )?
     ;
 if_statement_expr
-    :   'if' expr ':' expr ( 'elif' expr ':' expr )* ( 'else' ':' expr )? #if_statement_expression
+    :   'if' expr ':' expr ( 'elif' expr ':' expr )* ( 'else' ':' expr )?
     ;
 
 for_loop_expr
@@ -127,11 +126,21 @@ OP_MUL: '*';
 OP_DIV: '/';
 OP_POW: '**';
 
-NEWLINE : [\r\n]+ ;
+// NEWLINE : [\r\n]+ ;
+
+// NEW_STRING: '"' (~['\\', '\n', '"'] | '\\' ~[\n])* '"';
+// NEW_1STRING: '"' ('""' | '''' ~['\n', '"'] | '\\' ~[\n])* '"';
+
+// strings: opening = QUOTE (~[\'\""]*? | '""' | '\'\'')* '\\\n)'? closing = QUOTE;
+QUOTE: ('"' | '\'');
+stringz: opening = QUOTE (~['"]*? | '""' | '\'\'')* '\\\n'? closing = QUOTE;
+
+
 INT     : [0-9]+;
 FLOAT   : [0-9]+ '.' [0-9]+ ([eE] [+-]? [0-9]+)? | [0-9]+ [eE] [+-]? [0-9]+ ;
-BOOL    : 'True' | 'False' ;
+BOOL    : 'True' | 'False';
 STRING  : '"' .*? '"';
+WS      : [ \t\n]+ -> skip;
+
 NONE    : 'None';
 ID      : [a-zA-Z_][a-zA-Z_0-9]*;
-WS      : [ \t\n]+ -> skip;

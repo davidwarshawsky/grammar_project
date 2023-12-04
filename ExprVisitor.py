@@ -129,6 +129,16 @@ class ExprVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by ExprParser#forLoopExpression.
+    def visitForLoopExpression(self, ctx:ExprParser.ForLoopExpressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ExprParser#whileLoopExpression.
+    def visitWhileLoopExpression(self, ctx:ExprParser.WhileLoopExpressionContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by ExprParser#data_structures.
     def visitData_structures(self, ctx:ExprParser.Data_structuresContext):
         return self.visitChildren(ctx)
@@ -189,8 +199,18 @@ class ExprVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by ExprParser#if_statement_expression.
-    def visitIf_statement_expression(self, ctx:ExprParser.If_statement_expressionContext):
+    # Visit a parse tree produced by ExprParser#if_statement_expr.
+    def visitIf_statement_expr(self, ctx:ExprParser.If_statement_exprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ExprParser#for_loop_expression.
+    def visitFor_loop_expression(self, ctx:ExprParser.For_loop_expressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ExprParser#while_loop_expression.
+    def visitWhile_loop_expression(self, ctx:ExprParser.While_loop_expressionContext):
         return self.visitChildren(ctx)
 
 

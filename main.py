@@ -12,19 +12,28 @@ def main():
               4:'(1+2+3)',
               5: 'friend = "David"'}
     # inp = inputs[5]
-    with open('if_statement_tester.py', 'r') as file:
-        inp = file.read()
-    input_stream = InputStream(inp)
-    print(f" The input is {inp}")
-    lexer = ExprLexer(input_stream)
-    stream = CommonTokenStream(lexer)
-    parser = ExprParser(stream)
-    tree = parser.prog()
+    # with open('if_statement_tester.py', 'r') as file:
+    #     inp = file.read()
+    # with open("for_loop_statement_tester.py", 'r') as file:
+    #     inp = file.read()
 
-    visitor = MyExprVisitor()
-    res = visitor.visit(tree)  # Evaluate the expression
+    paths = [
+        "for_loop_tester_statement_invalid.py"
+    ]
+    for path in paths:
+        with open(path, 'r') as file:
+            inp = file.read()
+        input_stream = InputStream(inp)
+        print(f'The input is:\n"\n{inp}\n"')
+        lexer = ExprLexer(input_stream)
+        stream = CommonTokenStream(lexer)
+        parser = ExprParser(stream)
+        tree = parser.prog()
 
-    # print(res)
+        visitor = MyExprVisitor()
+        res = visitor.visit(tree)  # Evaluate the expression
+
+        # print(res)
 
 if __name__ == '__main__':
     main()

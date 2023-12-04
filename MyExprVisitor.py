@@ -21,11 +21,10 @@ class MyExprVisitor(ExprVisitor):
     def visitProg(self, ctx: ExprParser.ProgContext):
         # Chnage the try except finally to say the program is correctly made
         try:
-            return self.visit(ctx.expr())  # Visit the expression
+            response = self.visit(ctx.expr())
+            print("Program is correctly made")
         except ValueError as e:
             print(e)
-        finally:
-            print("Program is correctly made")
         # try:
         #     return self.visit(ctx.expr())  # Just visit the self expression
         # except ValueError as e:
@@ -61,7 +60,7 @@ class MyExprVisitor(ExprVisitor):
         else:
             return a
     
-    def visitIfStatementExpression(self, ctx: ExprParser.If_statement_expressionContext):
+    def visitIfStatementExpression(self, ctx: ExprParser.IfStatementExpressionContext):
         # Evaluate the expression for 'if'
         if_expr_result = self.visit(ctx.expr(0))
         # Check if the result is a bool or ID
@@ -75,6 +74,23 @@ class MyExprVisitor(ExprVisitor):
             if elif_expr_result not in ['BOOL', 'ID']:
                 raise ValueError(f"Invalid condition in elif statement: {elif_expr_result}")
 
+    def visitFor_loop_expression(self, ctx: ExprParser.For_loop_expressionContext):
+        # If the expr in for loop expr is not a bool or ID, raise an error
+        # save the ctx.expr() text in a variable to use in ValueError if needed
+        expr_text = ctx.expr().getText()
+        
+        for_expr_result = self.visit(ctx.expr())
+
+        if for_expr_result not in ['LIST', 'TUPLE', 'DICT', 'SET','ID', 'STRING']:
+            raise ValueError(f"Invalid condition in for loop: {expr_text} of type {for_expr_result} Not an iterable value")
+        
+
+    def visitWhile_loop_expression(self, ctx: ExprParser.While_loop_expressionContext):
+        # If the expr in while loop expr is not a bool or ID, raise an error
+        expr_text = ctx.expr().getText()
+        while_expr_result = self.visit(ctx.expr())
+        if while_expr_result not in ['BOOL', 'ID']:
+            raise ValueError(f"Invalid condition in while loop: {expr_text} Not an ID or BOOL")
 
     # Visit a parse tree produced by ExprParser#parensExpr.
     def visitParensExpression(self, ctx: ExprParser.ParensExpressionContext):
@@ -105,17 +121,17 @@ class MyExprVisitor(ExprVisitor):
             return 'SET'
         
 
-    # Visit a parse tree produced by ExprParser#dict.
-    def visitDict(self, ctx: ExprParser.DictContext):
-        return 'DICT'
+    # # Visit a parse tree produced by ExprParser#dict.
+    # def visitDict(self, ctx: ExprParser.DictContext):
+    #     return 'DICT'
 
-    # Visit a parse tree produced by ExprParser#set.
-    def visitSet(self, ctx: ExprParser.SetContext):
-        return 'SET'
+    # # Visit a parse tree produced by ExprParser#set.
+    # def visitSet(self, ctx: ExprParser.SetContext):
+    #     return 'SET'
 
-    # Visit a parse tree produced by ExprParser#list.
-    def visitList(self, ctx: ExprParser.ListContext):
-        return 'LIST'
+    # # Visit a parse tree produced by ExprParser#list.
+    # def visitList(self, ctx: ExprParser.ListContext):
+    #     return 'LIST'
     
     def visitAssignmentExpression(self, ctx: ExprParser.AssignmentExpressionContext):
         return self.visit(ctx.expr())
