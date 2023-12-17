@@ -5,7 +5,7 @@ It covers
 - For loop declarations
 - While Loop declarations
 - If statement, elif statements, else statement.
-- Operations +,-,/,%,//,*,** between data types and checks what is valid.
+- Operations +,-,/,%,//,*,** with support for parenthesis between data types and checks what is valid. All expressions are left-recursive except for ** which is right recursive.
 - The program is run through main.py
 - There is a MyExprVisitor.py class that implements the labels from the Expr.g4(ANTLR4 file) which declares the grammar.
 
